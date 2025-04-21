@@ -38,6 +38,13 @@ export function WysiwygEditor({ value, onChange, placeholder, name, id }: Wysiwy
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML());
     },
+    editorProps: {
+      attributes: {
+        class: 'prose focus:outline-none min-h-[400px]',
+      },
+    },
+    // Disable SSR by setting immediatelyRender to false
+    immediatelyRender: false,
   });
 
   if (!editor) {
@@ -141,7 +148,7 @@ export function WysiwygEditor({ value, onChange, placeholder, name, id }: Wysiwy
       
       <EditorContent 
         editor={editor} 
-        className="p-3 min-h-[150px] prose max-w-none" 
+        className="p-3 prose max-w-none" 
       />
       
       {/* Hidden input to store HTML content for form submission */}
@@ -151,6 +158,19 @@ export function WysiwygEditor({ value, onChange, placeholder, name, id }: Wysiwy
         value={value} 
         id={id} 
       />
+
+      {/* Add custom styles for full height */}
+      <style jsx global>{`
+        .ProseMirror {
+          min-height: 400px;
+          height: 100%;
+          overflow-y: auto;
+        }
+        
+        .tiptap {
+          height: 100%;
+        }
+      `}</style>
     </div>
   );
 }
