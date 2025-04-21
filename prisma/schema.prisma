@@ -1,0 +1,87 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model JournalEntry {
+  id        Int      @id @default(autoincrement())
+  date      DateTime @unique // Use unique constraint on date for easier lookup
+
+  // Pre-Market Prep
+  emotionalTemp    Int?
+  emotionalReason  String?
+  trcGoal          String?
+  trcPlan          String?
+  aphorisms        String?
+  macroContext     String?
+  tradePlan        String?
+
+  // During Market
+  executionNotes   String?
+  hesitation       Boolean? @default(false)
+  hesitationReason String?
+  managementRating Int?
+  managementReason String?
+  stayedWithWinner Boolean? @default(false)
+  // stayedWithWinnerReason String? // Missing in original model, add if needed
+  sizingOk         Boolean? @default(false)
+  convictionTrade  Boolean? @default(false)
+  convictionTradeReason String?
+  convictionSized  Boolean? @default(false)
+
+  // Post-Market Review
+  loggedInStats    Boolean? @default(false)
+  brokeRules       Boolean? @default(false)
+  rulesExplanation String?
+  trcProgress      Boolean? @default(false)
+  whyTrcProgress   String?
+  learnings        String?
+  whatIsntWorking  String?
+  eliminationPlan  String?
+  changePlan       String?
+  solutionBrainstorm String?
+  adjustmentForTomorrow String?
+  easyTrade        String?
+
+  // Strategic Adjustments
+  actionsToImproveForward String?
+  top3MistakesToday    String?
+  top3ThingsDoneWell   String?
+  oneTakeawayTeaching  String?
+  bestAndWorstTrades   String?
+  recurringMistake     String?
+  todaysRepetition     String?
+
+  // P&L
+  pnlOfTheDay     String?
+
+  // AI Insight
+  aiInsight        String?
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relation to Images
+  images JournalImage[]
+}
+
+model JournalImage {
+  id             Int      @id @default(autoincrement())
+  journalEntryId Int
+  imagePath      String // Store path relative to public dir or cloud URL
+  filename       String // Store the original filename or the generated one
+  caption        String?
+  section        String?  // e.g., 'execution_notes', 'chart_upload'
+  position       Int?
+
+  // Relation to Entry
+  entry JournalEntry @relation(fields: [journalEntryId], references: [id], onDelete: Cascade) // Cascade delete images if entry is deleted
+}

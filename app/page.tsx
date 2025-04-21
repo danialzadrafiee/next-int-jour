@@ -1,103 +1,181 @@
-import Image from "next/image";
+// app/journal/page.tsx
+import { prisma } from '@/lib/prisma';
+import { format } from 'date-fns';
+import Link from 'next/link';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Button } from '@/components/ui/button';
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 
-export default function Home() {
+export const revalidate = 60; // Revalidate data every 60 seconds
+
+async function getJournalEntries() {
+  const entries = await prisma.journalEntry.findMany({
+    orderBy: {
+      date: 'desc', // Order by date descending
+    },
+    include: {
+      images: true, // Include related images
+    },
+  });
+  return entries;
+}
+
+export default async function JournalPage() {
+  const entries = await getJournalEntries();
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <main className="container mx-auto px-4 py-8">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold">📖 My Trading Journal</h1>
+        <Button asChild>
+          <Link href="/journal/new">➕ Add New Entry</Link>
+        </Button>
+      </div>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+      {entries.length === 0 ? (
+        <p className="text-center text-muted-foreground">No journal entries found. Add one!</p>
+      ) : (
+        <Accordion type="single" collapsible className="w-full space-y-4">
+          {entries.map((entry) => (
+            <AccordionItem key={entry.id} value={`entry-${entry.id}`} className="border rounded-lg overflow-hidden">
+              <AccordionTrigger className="px-4 py-3 bg-muted hover:bg-accent transition-colors">
+                <div className="flex justify-between items-center w-full pr-4">
+                  <span className="font-medium flex items-center">
+                    📅 {format(new Date(entry.date), 'MMM dd, yyyy')} 
+                    {entry.aiInsight && <Badge variant="outline" className="ml-2 bg-blue-50">AI Analyzed</Badge>}
+                  </span>
+                  <span className="text-muted-foreground text-sm truncate max-w-md text-right">
+                    {entry.trcGoal?.substring(0, 50) || 'No goal'}{entry.trcGoal && entry.trcGoal.length > 50 ? '...' : ''}
+                  </span>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="p-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {/* Left Column - Emotional & Management Data */}
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-muted-foreground">Emotional State:</span>
+                      <Badge >
+                        {entry.emotionalTemp || 'N/A'}/10
+                      </Badge>
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-muted-foreground">Management:</span>
+                      <Badge >
+                        {entry.managementRating || 'N/A'}/5
+                      </Badge>
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-muted-foreground">TRC Progress:</span>
+                      <Badge >
+                        {entry.trcProgress ? "Yes" : "No"}
+                      </Badge>
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-muted-foreground">Rules Followed:</span>
+                      <Badge>
+                        {!entry.brokeRules ? "Yes" : "No"}
+                      </Badge>
+                    </div>
+                  </div>
+                  
+                  {/* Middle Column - Key Takeaways */}
+                  <div className="space-y-2">
+                    <h3 className="text-sm font-medium text-muted-foreground">Key Trade Info</h3>
+                    {entry.executionNotes ? (
+                      <p className="text-sm line-clamp-4">
+                        {entry.executionNotes.replace(/!\[\[.*?\]\]/g, '(Chart)')}
+                      </p>
+                    ) : (
+                      <p className="text-sm text-muted-foreground italic">No execution notes recorded</p>
+                    )}
+                    {entry.images.length > 0 && (
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {entry.images.length} chart image{entry.images.length !== 1 ? 's' : ''} attached
+                      </p>
+                    )}
+                  </div>
+                  
+                  {/* Right Column - Images & Actions */}
+                  <div className="flex flex-col justify-between h-full">
+                    <div>
+                      <h3 className="text-sm font-medium text-muted-foreground mb-2">Key Learnings</h3>
+                      <p className="text-sm line-clamp-3">
+                        {entry.learnings || entry.oneTakeawayTeaching || 'No learnings recorded'}
+                      </p>
+                    </div>
+                    
+                    <div className="flex justify-end space-x-2 mt-4">
+                      <Button variant="secondary" size="sm" asChild>
+                        <Link href={`/journal/${format(new Date(entry.date), 'yyyy-MM-dd')}`}>
+                          View Details
+                        </Link>
+                      </Button>
+                      <Button variant="outline" size="sm" asChild>
+                        <Link href={`/journal/edit/${format(new Date(entry.date), 'yyyy-MM-dd')}`}>
+                          Edit
+                        </Link>
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* P&L Information - If Available */}
+                {entry.pnlOfTheDay && (
+                  <Card className="mt-4">
+                    <CardContent className="p-4">
+                      <h3 className="text-sm font-medium mb-2">P&L Summary</h3>
+                      <pre className="bg-muted p-2 rounded-md text-xs overflow-x-auto whitespace-pre-wrap max-h-24 overflow-y-auto">
+                        {entry.pnlOfTheDay}
+                      </pre>
+                    </CardContent>
+                  </Card>
+                )}
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
+      )}
+      
+      {/* Add a simple chart or stats at the bottom */}
+      {entries.length > 0 && (
+        <div className="mt-8 p-4 border rounded-lg">
+          <h2 className="text-xl font-semibold mb-4">Journal Stats</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="text-center p-3 bg-muted rounded-md">
+              <p className="text-2xl font-bold">{entries.length}</p>
+              <p className="text-sm text-muted-foreground">Total Entries</p>
+            </div>
+            <div className="text-center p-3 bg-muted rounded-md">
+              <p className="text-2xl font-bold">
+                {entries.filter(e => e.trcProgress).length}
+              </p>
+              <p className="text-sm text-muted-foreground">TRC Goals Met</p>
+            </div>
+            <div className="text-center p-3 bg-muted rounded-md">
+              <p className="text-2xl font-bold">
+                {entries.filter(e => !e.brokeRules).length}
+              </p>
+              <p className="text-sm text-muted-foreground">Rule-Following Days</p>
+            </div>
+            <div className="text-center p-3 bg-muted rounded-md">
+              <p className="text-2xl font-bold">
+                {entries.filter(e => e.aiInsight).length}
+              </p>
+              <p className="text-sm text-muted-foreground">AI Analyzed</p>
+            </div>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+      )}
+    </main>
   );
 }
