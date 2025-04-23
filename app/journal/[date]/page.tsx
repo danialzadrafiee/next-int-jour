@@ -16,17 +16,14 @@ export async function generateStaticParams() {
     const entries = await prisma.journalEntry.findMany({
         select: { date: true },
     });
-
     return entries.map((entry) => ({
         date: format(entry.date, 'yyyy-MM-dd'),
     }));
 }
-
 async function getJournalEntry(dateString: string) {
     try {
         const date = parseISO(dateString);
 
-        // Normalize to start of day for consistent querying
         const startOfDay = new Date(date);
         startOfDay.setHours(0, 0, 0, 0);
 
@@ -76,10 +73,10 @@ export default async function JournalEntryPage({ params }: { params: { date: str
 
         // Check if content contains HTML tags
         if (content.includes('<')) {
-            return <div className="prose max-w-none dark:prose-invert" dangerouslySetInnerHTML={{ __html: content }} />;
+            return <div className="prose max-w-none text-wrap break-all dark:prose-invert" dangerouslySetInnerHTML={{ __html: content }} />;
         } else {
             // Just render as pre-formatted text if no HTML
-            return <div className="whitespace-pre-line">{content}</div>;
+            return <div className="whitespace-pre-line break-all">{content}</div>;
         }
     };
 

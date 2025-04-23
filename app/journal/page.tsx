@@ -2,7 +2,6 @@
 import { prisma } from '@/lib/prisma';
 import { format } from 'date-fns';
 import Link from 'next/link';
-import Image from 'next/image';
 import {
     Accordion,
     AccordionContent,

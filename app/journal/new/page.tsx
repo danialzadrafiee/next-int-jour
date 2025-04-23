@@ -314,7 +314,7 @@ export default function NewJournalEntryPage() {
     const initialSliderStates = formConfig.reduce((acc, section) => {
         section.fields.forEach(field => {
             if (field.type === 'slider') {
-                acc[field.id] = field.initialValue;
+                acc[field.id] = field.initialValue as number;
             }
         });
         return acc;
@@ -407,11 +407,11 @@ export default function NewJournalEntryPage() {
                 {formConfig.map(section => (
                     <section key={section.section} className="space-y-4 p-4 border rounded-lg">
                         <h2 className="text-xl font-semibold mb-3 text-primary">{section.icon} {section.section}</h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+                        <div className="grid grid-cols-1  gap-4 items-start">
                             {section.fields.map(field => (
                                 <div
                                     key={field.id}
-                                    className={`space-y-2 ${field.colSpan === 2 ? 'md:col-span-2' : ''} ${field.type === 'checkbox' ? 'flex items-center space-x-2 pt-2' : ''}`}
+                                    className={`space-y-2 ${field.colSpan === 2 ? 'md:col-span-1' : ''} ${field.type === 'checkbox' ? 'flex items-center space-x-2 pt-2' : ''}`}
                                 >
                                     {/* Render different components based on field type */}
                                     {field.type === 'input' && (
@@ -453,7 +453,7 @@ export default function NewJournalEntryPage() {
                                             <Slider
                                                 id={field.id}
                                                 name={field.id}
-                                                defaultValue={[field.initialValue]}
+                                                defaultValue={[field.initialValue as number]}
                                                 min={field.min}
                                                 max={field.max}
                                                 step={field.step}

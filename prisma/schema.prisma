@@ -30,7 +30,6 @@ model JournalEntry {
   managementRating Int?
   managementReason String?
   stayedWithWinner Boolean? @default(false)
-  // stayedWithWinnerReason String? // Missing in original model, add if needed
   sizingOk         Boolean? @default(false)
   convictionTrade  Boolean? @default(false)
   convictionTradeReason String?
@@ -62,7 +61,6 @@ model JournalEntry {
   // P&L
   pnlOfTheDay     String?
 
-  // AI Insight
   aiInsight        String?
 
   // Timestamps
