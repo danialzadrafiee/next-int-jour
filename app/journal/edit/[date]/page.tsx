@@ -15,8 +15,9 @@ import { Slider } from "@/components/ui/slider";
 import { DatePicker } from "@/components/ui/date-picker";
 import { toast } from "sonner";
 import Link from "next/link";
+import React from "react"; // Import React for key prop
 
-// Type declaration for entry data
+// Type declaration for entry data (can be imported or defined here)
 type JournalEntryData = {
     id: number;
     date: string;
@@ -66,10 +67,302 @@ type FormState = {
     success?: boolean;
 };
 
+// Define the configuration for each form field (can be shared or imported)
+const formConfig = [
+    {
+        section: "Pre-Market Prep",
+        icon: "🧠",
+        fields: [
+            {
+                id: "emotionalTemp",
+                label: "Emotional Temperature",
+                type: "slider",
+                min: 1,
+                max: 10,
+                step: 1,
+                initialValue: 5, // Default value if no data
+                suffix: "/10",
+            },
+            {
+                id: "emotionalReason",
+                label: "Reason for Emotional State",
+                type: "wysiwyg",
+                placeholder: "Feeling calm and focused because...",
+            },
+            {
+                id: "trcGoal",
+                label: "TRC Goal",
+                type: "input",
+                placeholder: "e.g., Execute plan flawlessly, manage risk",
+                colSpan: 2,
+            },
+            {
+                id: "trcPlan",
+                label: "Plan to Achieve TRC Goal",
+                type: "wysiwyg",
+                placeholder: "How will you achieve the goal?",
+                colSpan: 2,
+            },
+            {
+                id: "aphorisms",
+                label: "Reminders / Aphorisms",
+                type: "input",
+                placeholder: "e.g., Stick to the plan, don't chase",
+                colSpan: 2,
+            },
+            {
+                id: "macroContext",
+                label: "Macro Context",
+                type: "wysiwyg",
+                placeholder: "Overall market sentiment, key news, levels...",
+                colSpan: 2,
+            },
+            {
+                id: "tradePlan",
+                label: "Trading plan for the day",
+                type: "wysiwyg",
+                placeholder: "Setup, Triggers, Invalidation, Size plan...",
+                colSpan: 2,
+            },
+        ],
+    },
+    {
+        section: "During Market",
+        icon: "⚔",
+        fields: [
+            {
+                id: "executionNotes",
+                label: "Execution Notes",
+                type: "wysiwyg",
+                placeholder: "Detailed notes on trades taken. You can paste images directly here.",
+                colSpan: 2,
+            },
+            {
+                id: "hesitation",
+                label: "Did You Hesitate?",
+                type: "checkbox",
+            },
+            {
+                id: "hesitationReason",
+                label: "Where and why?",
+                type: "wysiwyg",
+                placeholder: "Reason for hesitation (if applicable)",
+            },
+            {
+                id: "managementRating",
+                label: "Trade Management Rating",
+                type: "slider",
+                min: 1,
+                max: 5,
+                step: 1,
+                initialValue: 3, // Default value if no data
+                suffix: "/5",
+            },
+            {
+                id: "managementReason",
+                label: "Management Details",
+                type: "wysiwyg",
+                placeholder: "Details about trade management",
+            },
+            {
+                id: "stayedWithWinner",
+                label: "Stayed with Winners?",
+                type: "checkbox",
+            },
+            {
+                id: "sizingOk",
+                label: "Sizing OK?",
+                type: "checkbox",
+            },
+            {
+                id: "convictionTrade",
+                label: "Conviction Trade?",
+                type: "checkbox",
+            },
+            {
+                id: "convictionTradeReason",
+                label: "Conviction Trade Details",
+                type: "wysiwyg",
+                placeholder: "Details about conviction trade (if applicable)",
+            },
+            {
+                id: "convictionSized",
+                label: "Sized by Conviction?",
+                type: "checkbox",
+            },
+        ],
+    },
+    {
+        section: "Post-Market",
+        icon: "📊",
+        fields: [
+            {
+                id: "loggedInStats",
+                label: "Logged Stats?",
+                type: "checkbox",
+            },
+            {
+                id: "brokeRules",
+                label: "Broke Rules?",
+                type: "checkbox",
+            },
+            {
+                id: "rulesExplanation",
+                label: "Rule Breaking Explanation",
+                type: "wysiwyg",
+                placeholder: "Explanation of rule breaking (if applicable)",
+                colSpan: 2,
+            },
+            {
+                id: "trcProgress",
+                label: "Made TRC Progress?",
+                type: "checkbox",
+            },
+            {
+                id: "whyTrcProgress",
+                label: "Why/Why Not TRC Progress",
+                type: "wysiwyg",
+                placeholder: "Explanation of TRC progress",
+                colSpan: 2,
+            },
+            {
+                id: "pnlOfTheDay",
+                label: "P&L Summary",
+                type: "wysiwyg",
+                placeholder: "Summary of profit/loss for the day",
+                colSpan: 2,
+            },
+        ],
+    },
+    {
+        section: "Learnings & Improvements",
+        icon: "📚",
+        fields: [
+            {
+                id: "learnings",
+                label: "Key Learnings",
+                type: "wysiwyg",
+                placeholder: "What did you learn today?",
+            },
+            {
+                id: "whatIsntWorking",
+                label: "What Isn't Working",
+                type: "wysiwyg",
+                placeholder: "Aspects of your trading that aren't working",
+            },
+            {
+                id: "eliminationPlan",
+                label: "What to Eliminate",
+                type: "wysiwyg",
+                placeholder: "What should be eliminated from your process?",
+            },
+            {
+                id: "changePlan",
+                label: "Changes to Achieve Goal",
+                type: "wysiwyg",
+                placeholder: "What changes can help achieve your goals?",
+            },
+            {
+                id: "solutionBrainstorm",
+                label: "Solution Brainstorm",
+                type: "wysiwyg",
+                placeholder: "Brainstorm solutions for problems identified",
+            },
+            {
+                id: "adjustmentForTomorrow",
+                label: "Adjustments for Tomorrow",
+                type: "wysiwyg",
+                placeholder: "What adjustments will you make tomorrow?",
+            },
+            {
+                id: "easyTrade",
+                label: "Easy Trade of the Day",
+                type: "wysiwyg",
+                placeholder: "Describe the easiest trade you saw today",
+            },
+        ],
+    },
+    {
+        section: "Strategic",
+        icon: "🎯",
+        fields: [
+            {
+                id: "top3ThingsDoneWell",
+                label: "Top 3 Things Done Well",
+                type: "wysiwyg",
+                placeholder: "What were the top 3 things you did well today?",
+            },
+            {
+                id: "top3MistakesToday",
+                label: "Top 3 Mistakes Today",
+                type: "wysiwyg",
+                placeholder: "What were your top 3 mistakes today?",
+            },
+            {
+                id: "bestAndWorstTrades",
+                label: "Best and Worst Trades",
+                type: "wysiwyg",
+                placeholder: "What were your best and worst trades today?",
+            },
+            {
+                id: "recurringMistake",
+                label: "Recurring Mistake",
+                type: "wysiwyg",
+                placeholder: "Is there a recurring mistake you're seeing?",
+            },
+            {
+                id: "oneTakeawayTeaching",
+                label: "One Takeaway to Teach",
+                type: "wysiwyg",
+                placeholder: "If you had to teach one takeaway from today, what would it be?",
+            },
+            {
+                id: "todaysRepetition",
+                label: "If Today Repeated 10x",
+                type: "wysiwyg",
+                placeholder: "If today repeated 10 times, what would you change for edge?",
+            },
+            {
+                id: "actionsToImproveForward",
+                label: "Actions to Improve Forward",
+                type: "wysiwyg",
+                placeholder: "What specific actions will improve your trading going forward?"
+            }
+        ]
+    }
+];
+
+// Helper function to get initial WYSIWYG content state based on fetched data
+const getInitialWysiwygContents = (data: JournalEntryData | null) => {
+    const initialContents: Record<string, string> = {};
+    formConfig.forEach(section => {
+        section.fields.forEach(field => {
+            if (field.type === 'wysiwyg') {
+                // Use fetched data if available, otherwise an empty string
+                initialContents[field.id] = data?.[field.id as keyof JournalEntryData]?.toString() || "";
+            }
+        });
+    });
+    return initialContents;
+};
+
+// Helper function to get initial slider states based on fetched data
+const getInitialSliderStates = (data: JournalEntryData | null) => {
+    const initialStates: Record<string, number> = {};
+    formConfig.forEach(section => {
+        section.fields.forEach(field => {
+            if (field.type === 'slider') {
+                // Use fetched data if available, otherwise the default initialValue from config
+                initialStates[field.id] = data?.[field.id as keyof JournalEntryData] as number | undefined || field.initialValue;
+            }
+        });
+    });
+    return initialStates;
+};
+
+
 export default function EditJournalEntryPage({ params }: { params: { date: string } }) {
-    // Unwrap params using React.use
-    const resolvedParams = use(params);
-    const dateParam = resolvedParams.date;
+    const dateParam = use(params).date; // More concise unwrapping
 
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(true);
@@ -83,39 +376,15 @@ export default function EditJournalEntryPage({ params }: { params: { date: strin
     const [date, setDate] = useState<Date | undefined>(
         dateParam ? parseISO(dateParam) : new Date()
     );
-    const [emotionalTemp, setEmotionalTemp] = useState<number>(5);
-    const [managementRating, setManagementRating] = useState<number>(3);
 
-    // State for storing WYSIWYG content
-    const [editorContents, setEditorContents] = useState({
-        emotionalReason: "",
-        trcPlan: "",
-        macroContext: "",
-        tradePlan: "",
-        executionNotes: "",
-        hesitationReason: "",
-        managementReason: "",
-        convictionTradeReason: "",
-        rulesExplanation: "",
-        whyTrcProgress: "",
-        learnings: "",
-        whatIsntWorking: "",
-        eliminationPlan: "",
-        changePlan: "",
-        solutionBrainstorm: "",
-        adjustmentForTomorrow: "",
-        easyTrade: "",
-        actionsToImproveForward: "",
-        top3MistakesToday: "",
-        top3ThingsDoneWell: "",
-        oneTakeawayTeaching: "",
-        bestAndWorstTrades: "",
-        recurringMistake: "",
-        todaysRepetition: "",
-        pnlOfTheDay: "",
-    });
+    // State for storing WYSIWYG content, initialized based on fetched data
+    const [editorContents, setEditorContents] = useState(getInitialWysiwygContents(null));
 
-    // Fetch entry data
+    // State for storing slider values, initialized based on fetched data
+    const [sliderStates, setSliderStates] = useState(getInitialSliderStates(null));
+
+
+    // Fetch entry data and populate state
     useEffect(() => {
         async function fetchJournalEntry() {
             try {
@@ -126,42 +395,14 @@ export default function EditJournalEntryPage({ params }: { params: { date: strin
                     throw new Error(`Failed to fetch entry: ${response.status}`);
                 }
 
-                const data = await response.json();
+                const data: JournalEntryData = await response.json();
                 setEntryData(data);
 
                 // Update form state with entry data
                 if (data) {
-                    setEmotionalTemp(data.emotionalTemp || 5);
-                    setManagementRating(data.managementRating || 3);
-
-                    // Update WYSIWYG editor contents
-                    setEditorContents({
-                        emotionalReason: data.emotionalReason || "",
-                        trcPlan: data.trcPlan || "",
-                        macroContext: data.macroContext || "",
-                        tradePlan: data.tradePlan || "",
-                        executionNotes: data.executionNotes || "",
-                        hesitationReason: data.hesitationReason || "",
-                        managementReason: data.managementReason || "",
-                        convictionTradeReason: data.convictionTradeReason || "",
-                        rulesExplanation: data.rulesExplanation || "",
-                        whyTrcProgress: data.whyTrcProgress || "",
-                        learnings: data.learnings || "",
-                        whatIsntWorking: data.whatIsntWorking || "",
-                        eliminationPlan: data.eliminationPlan || "",
-                        changePlan: data.changePlan || "",
-                        solutionBrainstorm: data.solutionBrainstorm || "",
-                        adjustmentForTomorrow: data.adjustmentForTomorrow || "",
-                        easyTrade: data.easyTrade || "",
-                        actionsToImproveForward: data.actionsToImproveForward || "",
-                        top3MistakesToday: data.top3MistakesToday || "",
-                        top3ThingsDoneWell: data.top3ThingsDoneWell || "",
-                        oneTakeawayTeaching: data.oneTakeawayTeaching || "",
-                        bestAndWorstTrades: data.bestAndWorstTrades || "",
-                        recurringMistake: data.recurringMistake || "",
-                        todaysRepetition: data.todaysRepetition || "",
-                        pnlOfTheDay: data.pnlOfTheDay || "",
-                    });
+                    setDate(parseISO(data.date)); // Update the date state
+                    setSliderStates(getInitialSliderStates(data));
+                    setEditorContents(getInitialWysiwygContents(data));
                 }
             } catch (error) {
                 console.error("Error fetching journal entry:", error);
@@ -183,6 +424,11 @@ export default function EditJournalEntryPage({ params }: { params: { date: strin
         try {
             const formData = new FormData(e.currentTarget);
 
+            // Add the entry ID to the form data for updates
+             if (entryData?.id) {
+                 formData.set('id', entryData.id.toString());
+             }
+
             // Handle date field
             if (date) {
                 formData.set('date', format(date, 'yyyy-MM-dd'));
@@ -193,8 +439,26 @@ export default function EditJournalEntryPage({ params }: { params: { date: strin
                 formData.set(key, value);
             });
 
+             // Add slider values to FormData
+             Object.entries(sliderStates).forEach(([key, value]) => {
+                 formData.set(key, value.toString());
+             });
+
+             // Handle checkbox values (server action expects 'on' or null)
+             formConfig.forEach(section => {
+                 section.fields.forEach(field => {
+                     if (field.type === 'checkbox') {
+                          const checkbox = e.currentTarget.elements.namedItem(field.id) as HTMLInputElement;
+                          if (checkbox && !checkbox.checked) {
+                              formData.set(field.id, ''); // Set to empty string if not checked
+                          }
+                     }
+                 });
+             });
+
+
             // Call the server action with the current formState
-            const result = await saveJournalEntry(formState, formData);
+            const result = await saveJournalEntry(formState, formData); // Assuming saveJournalEntry handles updates based on 'id'
 
             setFormState(result);
 
@@ -212,6 +476,14 @@ export default function EditJournalEntryPage({ params }: { params: { date: strin
             setIsSubmitting(false);
         }
     };
+
+     // Effect to log validation errors to console for debugging
+     useEffect(() => {
+        if (formState?.errors) {
+            console.error("Server-side validation errors:", formState.errors);
+        }
+    }, [formState]);
+
 
     if (isLoading) {
         return (
@@ -233,6 +505,7 @@ export default function EditJournalEntryPage({ params }: { params: { date: strin
         );
     }
 
+    // Render the form once data is loaded
     return (
         <main className="container mx-auto px-4 py-8 max-w-4xl">
             <div className="flex items-center justify-between mb-6">
@@ -242,470 +515,96 @@ export default function EditJournalEntryPage({ params }: { params: { date: strin
                 </Button>
             </div>
             <form onSubmit={handleSubmit} className="space-y-8">
+                {/* Hidden input for entry ID */}
+                 {entryData?.id && <input type="hidden" name="id" value={entryData.id} />}
+
                 {/* Date Selection */}
                 <div className="space-y-2">
                     <Label htmlFor="date">Journal Date</Label>
                     <DatePicker date={date} setDate={setDate} />
+                    {/* Keep the hidden input for date even though DatePicker manages state */}
                     <input type="hidden" name="date" value={date ? format(date, 'yyyy-MM-dd') : ''} />
                     {formState?.errors?.date && <p className="text-sm text-red-500">{formState.errors.date[0]}</p>}
                 </div>
 
-                {/* Pre-Market Prep */}
-                <section className="space-y-4 p-4 border rounded-lg">
-                    <h2 className="text-xl font-semibold mb-3 text-primary">🧠 Pre-Market Prep</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                            <Label htmlFor="emotionalTemp">Emotional Temperature ({emotionalTemp}/10)</Label>
-                            <Slider
-                                id="emotionalTemp"
-                                name="emotionalTemp"
-                                defaultValue={[emotionalTemp]}
-                                min={1}
-                                max={10}
-                                step={1}
-                                onValueChange={(value) => setEmotionalTemp(value[0])}
-                            />
-                            {formState?.errors?.emotionalTemp && <p className="text-sm text-red-500">{formState.errors.emotionalTemp[0]}</p>}
-                        </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="emotionalReason">Reason for Emotional State</Label>
-                            <WysiwygEditor
-                                id="emotionalReason"
-                                name="emotionalReason"
-                                value={editorContents.emotionalReason}
-                                onChange={(html) => setEditorContents({ ...editorContents, emotionalReason: html })}
-                                placeholder="Feeling calm and focused because..."
-                            />
-                            {formState?.errors?.emotionalReason && <p className="text-sm text-red-500">{formState.errors.emotionalReason[0]}</p>}
-                        </div>
-                        <div className="space-y-2 md:col-span-2">
-                            <Label htmlFor="trcGoal">TRC Goal</Label>
-                            <Input
-                                id="trcGoal"
-                                name="trcGoal"
-                                placeholder="e.g., Execute plan flawlessly, manage risk"
-                                defaultValue={entryData?.trcGoal || ''}
-                            />
-                            {formState?.errors?.trcGoal && <p className="text-sm text-red-500">{formState.errors.trcGoal[0]}</p>}
-                        </div>
-                        <div className="space-y-2 md:col-span-2">
-                            <Label htmlFor="trcPlan">Plan to Achieve TRC Goal</Label>
-                            <WysiwygEditor
-                                id="trcPlan"
-                                name="trcPlan"
-                                value={editorContents.trcPlan}
-                                onChange={(html) => setEditorContents({ ...editorContents, trcPlan: html })}
-                                placeholder="How will you achieve the goal?"
-                            />
-                            {formState?.errors?.trcPlan && <p className="text-sm text-red-500">{formState.errors.trcPlan[0]}</p>}
-                        </div>
-                        <div className="space-y-2 md:col-span-2">
-                            <Label htmlFor="aphorisms">Reminders / Aphorisms</Label>
-                            <Input
-                                id="aphorisms"
-                                name="aphorisms"
-                                placeholder="e.g., Stick to the plan, don't chase"
-                                defaultValue={entryData?.aphorisms || ''}
-                            />
-                            {formState?.errors?.aphorisms && <p className="text-sm text-red-500">{formState.errors.aphorisms[0]}</p>}
-                        </div>
-                        <div className="space-y-2 md:col-span-2">
-                            <Label htmlFor="macroContext">Macro Context</Label>
-                            <WysiwygEditor
-                                id="macroContext"
-                                name="macroContext"
-                                value={editorContents.macroContext}
-                                onChange={(html) => setEditorContents({ ...editorContents, macroContext: html })}
-                                placeholder="Overall market sentiment, key news, levels..."
-                            />
-                            {formState?.errors?.macroContext && <p className="text-sm text-red-500">{formState.errors.macroContext[0]}</p>}
-                        </div>
-                        <div className="space-y-2 md:col-span-2">
-                            <Label htmlFor="tradePlan">Trading plan for the day</Label>
-                            <WysiwygEditor
-                                id="tradePlan"
-                                name="tradePlan"
-                                value={editorContents.tradePlan}
-                                onChange={(html) => setEditorContents({ ...editorContents, tradePlan: html })}
-                                placeholder="Setup, Triggers, Invalidation, Size plan..."
-                            />
-                            {formState?.errors?.tradePlan && <p className="text-sm text-red-500">{formState.errors.tradePlan[0]}</p>}
-                        </div>
-                    </div>
-                </section>
+                {formConfig.map(section => (
+                    <section key={section.section} className="space-y-4 p-4 border rounded-lg">
+                        <h2 className="text-xl font-semibold mb-3 text-primary">{section.icon} {section.section}</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+                            {section.fields.map(field => (
+                                <div
+                                    key={field.id}
+                                    className={`space-y-2 ${field.colSpan === 2 ? 'md:col-span-2' : ''} ${field.type === 'checkbox' ? 'flex items-center space-x-2 pt-2' : ''}`}
+                                >
+                                    {/* Render different components based on field type */}
+                                    {field.type === 'input' && (
+                                        <>
+                                            <Label htmlFor={field.id}>{field.label}</Label>
+                                            <Input
+                                                id={field.id}
+                                                name={field.id}
+                                                placeholder={field.placeholder}
+                                                defaultValue={entryData?.[field.id as keyof JournalEntryData]?.toString() || ''} // Populate with fetched data
+                                            />
+                                        </>
+                                    )}
 
-                {/* During Market */}
-                <section className="space-y-4 p-4 border rounded-lg">
-                    <h2 className="text-xl font-semibold mb-3 text-primary">⚔ During Market</h2>
-                    <div className="space-y-2">
-                        <Label htmlFor="executionNotes">Execution Notes</Label>
-                        <WysiwygEditor
-                            id="executionNotes"
-                            name="executionNotes"
-                            value={editorContents.executionNotes}
-                            onChange={(html) => setEditorContents({ ...editorContents, executionNotes: html })}
-                            placeholder="Detailed notes on trades taken. You can paste images directly here."
-                        />
-                        {formState?.errors?.executionNotes && <p className="text-sm text-red-500">{formState.errors.executionNotes[0]}</p>}
-                    </div>
+                                    {field.type === 'wysiwyg' && (
+                                        <>
+                                            <Label htmlFor={field.id}>{field.label}</Label>
+                                            <WysiwygEditor
+                                                id={field.id}
+                                                name={field.id}
+                                                value={editorContents[field.id]} // Controlled component using state
+                                                onChange={(html) => setEditorContents({ ...editorContents, [field.id]: html })}
+                                                placeholder={field.placeholder}
+                                            />
+                                        </>
+                                    )}
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
-                        <div className="flex items-center space-x-2 pt-2">
-                            <Checkbox
-                                id="hesitation"
-                                name="hesitation"
-                                defaultChecked={entryData?.hesitation}
-                            />
-                            <Label htmlFor="hesitation">Did You Hesitate?</Label>
-                            {formState?.errors?.hesitation && <p className="text-sm text-red-500">{formState.errors.hesitation[0]}</p>}
-                        </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="hesitationReason">Where and why?</Label>
-                            <WysiwygEditor
-                                id="hesitationReason"
-                                name="hesitationReason"
-                                value={editorContents.hesitationReason}
-                                onChange={(html) => setEditorContents({ ...editorContents, hesitationReason: html })}
-                                placeholder="Reason for hesitation (if applicable)"
-                            />
-                            {formState?.errors?.hesitationReason && <p className="text-sm text-red-500">{formState.errors.hesitationReason[0]}</p>}
-                        </div>
+                                    {field.type === 'checkbox' && (
+                                        <>
+                                            {/* defaultChecked for initial load, name for FormData */}
+                                            <Checkbox
+                                                id={field.id}
+                                                name={field.id}
+                                                defaultChecked={entryData?.[field.id as keyof JournalEntryData] as boolean || false}
+                                            />
+                                            <Label htmlFor={field.id}>{field.label}</Label>
+                                        </>
+                                    )}
 
-                        <div className="space-y-2">
-                            <Label htmlFor="managementRating">Trade Management Rating ({managementRating}/5)</Label>
-                            <Slider
-                                id="managementRating"
-                                name="managementRating"
-                                defaultValue={[managementRating]}
-                                min={1}
-                                max={5}
-                                step={1}
-                                onValueChange={(value) => setManagementRating(value[0])}
-                            />
-                            {formState?.errors?.managementRating && <p className="text-sm text-red-500">{formState.errors.managementRating[0]}</p>}
-                        </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="managementReason">Management Details</Label>
-                            <WysiwygEditor
-                                id="managementReason"
-                                name="managementReason"
-                                value={editorContents.managementReason}
-                                onChange={(html) => setEditorContents({ ...editorContents, managementReason: html })}
-                                placeholder="Details about trade management"
-                            />
-                            {formState?.errors?.managementReason && <p className="text-sm text-red-500">{formState.errors.managementReason[0]}</p>}
-                        </div>
+                                    {field.type === 'slider' && (
+                                        <>
+                                            <Label htmlFor={field.id}>
+                                                {field.label} ({sliderStates[field.id]}{field.suffix})
+                                            </Label>
+                                            <Slider
+                                                id={field.id}
+                                                name={field.id}
+                                                // Use state value for controlled component
+                                                value={[sliderStates[field.id]]}
+                                                min={field.min}
+                                                max={field.max}
+                                                step={field.step}
+                                                onValueChange={(value) => setSliderStates({ ...sliderStates, [field.id]: value[0] })}
+                                            />
+                                        </>
+                                    )}
 
-                        <div className="flex items-center space-x-2 pt-2">
-                            <Checkbox
-                                id="stayedWithWinner"
-                                name="stayedWithWinner"
-                                defaultChecked={entryData?.stayedWithWinner}
-                            />
-                            <Label htmlFor="stayedWithWinner">Stayed with Winners?</Label>
-                            {formState?.errors?.stayedWithWinner && <p className="text-sm text-red-500">{formState.errors.stayedWithWinner[0]}</p>}
+                                    {/* Display validation errors */}
+                                    {formState?.errors?.[field.id] && <p className="text-sm text-red-500">{formState.errors[field.id][0]}</p>}
+                                </div>
+                            ))}
                         </div>
+                    </section>
+                ))}
 
-                        <div className="flex items-center space-x-2 pt-2">
-                            <Checkbox
-                                id="sizingOk"
-                                name="sizingOk"
-                                defaultChecked={entryData?.sizingOk}
-                            />
-                            <Label htmlFor="sizingOk">Sizing OK?</Label>
-                            {formState?.errors?.sizingOk && <p className="text-sm text-red-500">{formState.errors.sizingOk[0]}</p>}
-                        </div>
-
-                        <div className="flex items-center space-x-2 pt-2">
-                            <Checkbox
-                                id="convictionTrade"
-                                name="convictionTrade"
-                                defaultChecked={entryData?.convictionTrade}
-                            />
-                            <Label htmlFor="convictionTrade">Conviction Trade?</Label>
-                            {formState?.errors?.convictionTrade && <p className="text-sm text-red-500">{formState.errors.convictionTrade[0]}</p>}
-                        </div>
-
-                        <div className="space-y-2">
-                            <Label htmlFor="convictionTradeReason">Conviction Trade Details</Label>
-                            <WysiwygEditor
-                                id="convictionTradeReason"
-                                name="convictionTradeReason"
-                                value={editorContents.convictionTradeReason}
-                                onChange={(html) => setEditorContents({ ...editorContents, convictionTradeReason: html })}
-                                placeholder="Details about conviction trade (if applicable)"
-                            />
-                            {formState?.errors?.convictionTradeReason && <p className="text-sm text-red-500">{formState.errors.convictionTradeReason[0]}</p>}
-                        </div>
-
-                        <div className="flex items-center space-x-2 pt-2">
-                            <Checkbox
-                                id="convictionSized"
-                                name="convictionSized"
-                                defaultChecked={entryData?.convictionSized}
-                            />
-                            <Label htmlFor="convictionSized">Sized by Conviction?</Label>
-                            {formState?.errors?.convictionSized && <p className="text-sm text-red-500">{formState.errors.convictionSized[0]}</p>}
-                        </div>
-                    </div>
-                </section>
-
-                {/* Post-Market */}
-                <section className="space-y-4 p-4 border rounded-lg">
-                    <h2 className="text-xl font-semibold mb-3 text-primary">📊 Post-Market</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
-                        <div className="flex items-center space-x-2 pt-2">
-                            <Checkbox
-                                id="loggedInStats"
-                                name="loggedInStats"
-                                defaultChecked={entryData?.loggedInStats}
-                            />
-                            <Label htmlFor="loggedInStats">Logged Stats?</Label>
-                            {formState?.errors?.loggedInStats && <p className="text-sm text-red-500">{formState.errors.loggedInStats[0]}</p>}
-                        </div>
-
-                        <div className="flex items-center space-x-2 pt-2">
-                            <Checkbox
-                                id="brokeRules"
-                                name="brokeRules"
-                                defaultChecked={entryData?.brokeRules}
-                            />
-                            <Label htmlFor="brokeRules">Broke Rules?</Label>
-                            {formState?.errors?.brokeRules && <p className="text-sm text-red-500">{formState.errors.brokeRules[0]}</p>}
-                        </div>
-
-                        <div className="space-y-2 md:col-span-2">
-                            <Label htmlFor="rulesExplanation">Rule Breaking Explanation</Label>
-                            <WysiwygEditor
-                                id="rulesExplanation"
-                                name="rulesExplanation"
-                                value={editorContents.rulesExplanation}
-                                onChange={(html) => setEditorContents({ ...editorContents, rulesExplanation: html })}
-                                placeholder="Explanation of rule breaking (if applicable)"
-                            />
-                            {formState?.errors?.rulesExplanation && <p className="text-sm text-red-500">{formState.errors.rulesExplanation[0]}</p>}
-                        </div>
-
-                        <div className="flex items-center space-x-2 pt-2">
-                            <Checkbox
-                                id="trcProgress"
-                                name="trcProgress"
-                                defaultChecked={entryData?.trcProgress}
-                            />
-                            <Label htmlFor="trcProgress">Made TRC Progress?</Label>
-                            {formState?.errors?.trcProgress && <p className="text-sm text-red-500">{formState.errors.trcProgress[0]}</p>}
-                        </div>
-
-                        <div className="space-y-2 md:col-span-2">
-                            <Label htmlFor="whyTrcProgress">Why/Why Not TRC Progress</Label>
-                            <WysiwygEditor
-                                id="whyTrcProgress"
-                                name="whyTrcProgress"
-                                value={editorContents.whyTrcProgress}
-                                onChange={(html) => setEditorContents({ ...editorContents, whyTrcProgress: html })}
-                                placeholder="Explanation of TRC progress"
-                            />
-                            {formState?.errors?.whyTrcProgress && <p className="text-sm text-red-500">{formState.errors.whyTrcProgress[0]}</p>}
-                        </div>
-
-                        <div className="space-y-2 md:col-span-2">
-                            <Label htmlFor="pnlOfTheDay">P&L Summary</Label>
-                            <WysiwygEditor
-                                id="pnlOfTheDay"
-                                name="pnlOfTheDay"
-                                value={editorContents.pnlOfTheDay}
-                                onChange={(html) => setEditorContents({ ...editorContents, pnlOfTheDay: html })}
-                                placeholder="Summary of profit/loss for the day"
-                            />
-                            {formState?.errors?.pnlOfTheDay && <p className="text-sm text-red-500">{formState.errors.pnlOfTheDay[0]}</p>}
-                        </div>
-                    </div>
-                </section>
-
-                {/* Learnings & Improvements */}
-                <section className="space-y-4 p-4 border rounded-lg">
-                    <h2 className="text-xl font-semibold mb-3 text-primary">📚 Learnings & Improvements</h2>
-                    <div className="space-y-4">
-                        <div className="space-y-2">
-                            <Label htmlFor="learnings">Key Learnings</Label>
-                            <WysiwygEditor
-                                id="learnings"
-                                name="learnings"
-                                value={editorContents.learnings}
-                                onChange={(html) => setEditorContents({ ...editorContents, learnings: html })}
-                                placeholder="What did you learn today?"
-                            />
-                            {formState?.errors?.learnings && <p className="text-sm text-red-500">{formState.errors.learnings[0]}</p>}
-                        </div>
-
-                        <div className="space-y-2">
-                            <Label htmlFor="whatIsntWorking">What Isn't Working</Label>
-                            <WysiwygEditor
-                                id="whatIsntWorking"
-                                name="whatIsntWorking"
-                                value={editorContents.whatIsntWorking}
-                                onChange={(html) => setEditorContents({ ...editorContents, whatIsntWorking: html })}
-                                placeholder="Aspects of your trading that aren't working"
-                            />
-                            {formState?.errors?.whatIsntWorking && <p className="text-sm text-red-500">{formState.errors.whatIsntWorking[0]}</p>}
-                        </div>
-
-                        <div className="space-y-2">
-                            <Label htmlFor="eliminationPlan">What to Eliminate</Label>
-                            <WysiwygEditor
-                                id="eliminationPlan"
-                                name="eliminationPlan"
-                                value={editorContents.eliminationPlan}
-                                onChange={(html) => setEditorContents({ ...editorContents, eliminationPlan: html })}
-                                placeholder="What should be eliminated from your process?"
-                            />
-                            {formState?.errors?.eliminationPlan && <p className="text-sm text-red-500">{formState.errors.eliminationPlan[0]}</p>}
-                        </div>
-
-                        <div className="space-y-2">
-                            <Label htmlFor="changePlan">Changes to Achieve Goal</Label>
-                            <WysiwygEditor
-                                id="changePlan"
-                                name="changePlan"
-                                value={editorContents.changePlan}
-                                onChange={(html) => setEditorContents({ ...editorContents, changePlan: html })}
-                                placeholder="What changes can help achieve your goals?"
-                            />
-                            {formState?.errors?.changePlan && <p className="text-sm text-red-500">{formState.errors.changePlan[0]}</p>}
-                        </div>
-
-                        <div className="space-y-2">
-                            <Label htmlFor="solutionBrainstorm">Solution Brainstorm</Label>
-                            <WysiwygEditor
-                                id="solutionBrainstorm"
-                                name="solutionBrainstorm"
-                                value={editorContents.solutionBrainstorm}
-                                onChange={(html) => setEditorContents({ ...editorContents, solutionBrainstorm: html })}
-                                placeholder="Brainstorm solutions for problems identified"
-                            />
-                            {formState?.errors?.solutionBrainstorm && <p className="text-sm text-red-500">{formState.errors.solutionBrainstorm[0]}</p>}
-                        </div>
-
-                        <div className="space-y-2">
-                            <Label htmlFor="adjustmentForTomorrow">Adjustments for Tomorrow</Label>
-                            <WysiwygEditor
-                                id="adjustmentForTomorrow"
-                                name="adjustmentForTomorrow"
-                                value={editorContents.adjustmentForTomorrow}
-                                onChange={(html) => setEditorContents({ ...editorContents, adjustmentForTomorrow: html })}
-                                placeholder="What adjustments will you make tomorrow?"
-                            />
-                            {formState?.errors?.adjustmentForTomorrow && <p className="text-sm text-red-500">{formState.errors.adjustmentForTomorrow[0]}</p>}
-                        </div>
-
-                        <div className="space-y-2">
-                            <Label htmlFor="easyTrade">Easy Trade of the Day</Label>
-                            <WysiwygEditor
-                                id="easyTrade"
-                                name="easyTrade"
-                                value={editorContents.easyTrade}
-                                onChange={(html) => setEditorContents({ ...editorContents, easyTrade: html })}
-                                placeholder="Describe the easiest trade you saw today"
-                            />
-                            {formState?.errors?.easyTrade && <p className="text-sm text-red-500">{formState.errors.easyTrade[0]}</p>}
-                        </div>
-                    </div>
-                </section>
-
-                {/* Strategic */}
-                <section className="space-y-4 p-4 border rounded-lg">
-                    <h2 className="text-xl font-semibold mb-3 text-primary">🎯 Strategic</h2>
-                    <div className="space-y-4">
-                        <div className="space-y-2">
-                            <Label htmlFor="top3ThingsDoneWell">Top 3 Things Done Well</Label>
-                            <WysiwygEditor
-                                id="top3ThingsDoneWell"
-                                name="top3ThingsDoneWell"
-                                value={editorContents.top3ThingsDoneWell}
-                                onChange={(html) => setEditorContents({ ...editorContents, top3ThingsDoneWell: html })}
-                                placeholder="What were the top 3 things you did well today?"
-                            />
-                            {formState?.errors?.top3ThingsDoneWell && <p className="text-sm text-red-500">{formState.errors.top3ThingsDoneWell[0]}</p>}
-                        </div>
-
-                        <div className="space-y-2">
-                            <Label htmlFor="top3MistakesToday">Top 3 Mistakes Today</Label>
-                            <WysiwygEditor
-                                id="top3MistakesToday"
-                                name="top3MistakesToday"
-                                value={editorContents.top3MistakesToday}
-                                onChange={(html) => setEditorContents({ ...editorContents, top3MistakesToday: html })}
-                                placeholder="What were your top 3 mistakes today?"
-                            />
-                            {formState?.errors?.top3MistakesToday && <p className="text-sm text-red-500">{formState.errors.top3MistakesToday[0]}</p>}
-                        </div>
-
-                        <div className="space-y-2">
-                            <Label htmlFor="bestAndWorstTrades">Best and Worst Trades</Label>
-                            <WysiwygEditor
-                                id="bestAndWorstTrades"
-                                name="bestAndWorstTrades"
-                                value={editorContents.bestAndWorstTrades}
-                                onChange={(html) => setEditorContents({ ...editorContents, bestAndWorstTrades: html })}
-                                placeholder="What were your best and worst trades today?"
-                            />
-                            {formState?.errors?.bestAndWorstTrades && <p className="text-sm text-red-500">{formState.errors.bestAndWorstTrades[0]}</p>}
-                        </div>
-
-                        <div className="space-y-2">
-                            <Label htmlFor="recurringMistake">Recurring Mistake</Label>
-                            <WysiwygEditor
-                                id="recurringMistake"
-                                name="recurringMistake"
-                                value={editorContents.recurringMistake}
-                                onChange={(html) => setEditorContents({ ...editorContents, recurringMistake: html })}
-                                placeholder="Is there a recurring mistake you're seeing?"
-                            />
-                            {formState?.errors?.recurringMistake && <p className="text-sm text-red-500">{formState.errors.recurringMistake[0]}</p>}
-                        </div>
-
-                        <div className="space-y-2">
-                            <Label htmlFor="oneTakeawayTeaching">One Takeaway to Teach</Label>
-                            <WysiwygEditor
-                                id="oneTakeawayTeaching"
-                                name="oneTakeawayTeaching"
-                                value={editorContents.oneTakeawayTeaching}
-                                onChange={(html) => setEditorContents({ ...editorContents, oneTakeawayTeaching: html })}
-                                placeholder="If you had to teach one takeaway from today, what would it be?"
-                            />
-                            {formState?.errors?.oneTakeawayTeaching && <p className="text-sm text-red-500">{formState.errors.oneTakeawayTeaching[0]}</p>}
-                        </div>
-
-                        <div className="space-y-2">
-                            <Label htmlFor="todaysRepetition">If Today Repeated 10x</Label>
-                            <WysiwygEditor
-                                id="todaysRepetition"
-                                name="todaysRepetition"
-                                value={editorContents.todaysRepetition}
-                                onChange={(html) => setEditorContents({ ...editorContents, todaysRepetition: html })}
-                                placeholder="If today repeated 10 times, what would you change for edge?"
-                            />
-                            {formState?.errors?.todaysRepetition && <p className="text-sm text-red-500">{formState.errors.todaysRepetition[0]}</p>}
-                        </div>
-
-                        <div className="space-y-2">
-                            <Label htmlFor="actionsToImproveForward">Actions to Improve Forward</Label>
-                            <WysiwygEditor
-                                id="actionsToImproveForward"
-                                name="actionsToImproveForward"
-                                value={editorContents.actionsToImproveForward}
-                                onChange={(html) => setEditorContents({ ...editorContents, actionsToImproveForward: html })}
-                                placeholder="What specific actions will improve your trading going forward?"
-                            />
-                            {formState?.errors?.actionsToImproveForward && <p className="text-sm text-red-500">{formState.errors.actionsToImproveForward[0]}</p>}
-                        </div>
-                    </div>
-                </section>
 
                 {/* Submission */}
                 <div className="flex justify-between">
                     <Button type="button" variant="outline" asChild>
-                        <Link href={`/journal/${params.date}`}>Cancel</Link>
+                        <Link href={`/journal/${dateParam}`}>Cancel</Link>
                     </Button>
                     <Button type="submit" disabled={isSubmitting}>
                         {isSubmitting ? "Saving..." : "✅ Save Changes"}
