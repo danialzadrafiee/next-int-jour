@@ -108,7 +108,7 @@ export default async function JournalPage() {
                   {/* Right Column - Images & Actions */}
                   <div className="flex flex-col justify-between h-full">
                     <div>
-                      <h3 className="text-sm font-medium text-muted-foreground mb-2">Key Learnings</h3>
+                      <h3 className="text-sm font-medium text-muted-foreground mb-2">What did i learn/improve today(market+self)</h3>
                       <p className="text-sm line-clamp-3">
                         {entry.learnings || entry.oneTakeawayTeaching || 'No learnings recorded'}
                       </p>

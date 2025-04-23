@@ -35,7 +35,7 @@ model JournalEntry {
   convictionTradeReason String?
   convictionSized  Boolean? @default(false)
 
-  // Post-Market Review
+  // Post-Market Review Review
   loggedInStats    Boolean? @default(false)
   brokeRules       Boolean? @default(false)
   rulesExplanation String?

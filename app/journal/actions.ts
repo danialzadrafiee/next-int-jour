@@ -102,7 +102,7 @@ const JournalEntrySchema = z.object({
     convictionTradeReason: z.string().optional().nullable(),
     convictionSized: z.preprocess((val) => val === 'on' || val === true, z.boolean().optional().default(false)),
 
-    // Post-Market
+    // Post-Market Review
     loggedInStats: z.preprocess((val) => val === 'on' || val === true, z.boolean().optional().default(false)),
     brokeRules: z.preprocess((val) => val === 'on' || val === true, z.boolean().optional().default(false)),
     rulesExplanation: z.string().optional().nullable(),
@@ -364,21 +364,21 @@ export async function triggerAIAnalysis(entryId: number) {
         Broke Rules: ${entry.brokeRules ? 'Yes' : 'No'}
         Rule Explanation: ${entry.rulesExplanation?.replace(/<[^>]*>/g, '') ?? 'N/A'}
         Progress Toward TRC: ${entry.trcProgress ? 'Yes' : 'No'}
-        Why/Why Not TRC Progress: ${entry.whyTrcProgress?.replace(/<[^>]*>/g, '') ?? 'N/A'}
+        Why / Why Not  made progress toward trc?: ${entry.whyTrcProgress?.replace(/<[^>]*>/g, '') ?? 'N/A'}
         Learnings: ${entry.learnings?.replace(/<[^>]*>/g, '') ?? 'N/A'}
         What Isn't Working: ${entry.whatIsntWorking?.replace(/<[^>]*>/g, '') ?? 'N/A'}
         Elimination Plan: ${entry.eliminationPlan?.replace(/<[^>]*>/g, '') ?? 'N/A'}
         Change Plan: ${entry.changePlan?.replace(/<[^>]*>/g, '') ?? 'N/A'}
-        Solution Brainstorm: ${entry.solutionBrainstorm?.replace(/<[^>]*>/g, '') ?? 'N/A'}
+        For the changes i need to make starting today, what are the solutions i can find?: ${entry.solutionBrainstorm?.replace(/<[^>]*>/g, '') ?? 'N/A'}
         Adjustment for Tomorrow: ${entry.adjustmentForTomorrow?.replace(/<[^>]*>/g, '') ?? 'N/A'}
-        Easy Trade of the Day: ${entry.easyTrade?.replace(/<[^>]*>/g, '') ?? 'N/A'}
-        Actions to improve forward: ${entry.actionsToImproveForward?.replace(/<[^>]*>/g, '') ?? 'N/A'}
-        Top 3 mistakes today: ${entry.top3MistakesToday?.replace(/<[^>]*>/g, '') ?? 'N/A'}
-        Top 3 things done well: ${entry.top3ThingsDoneWell?.replace(/<[^>]*>/g, '') ?? 'N/A'}
-        One takeaway to teach: ${entry.oneTakeawayTeaching?.replace(/<[^>]*>/g, '') ?? 'N/A'}
-        Best and worst trades: ${entry.bestAndWorstTrades?.replace(/<[^>]*>/g, '') ?? 'N/A'}
-        Recurring mistake: ${entry.recurringMistake?.replace(/<[^>]*>/g, '') ?? 'N/A'}
-        If today repeated 10x, change for edge: ${entry.todaysRepetition?.replace(/<[^>]*>/g, '') ?? 'N/A'}
+        What was the Easy Trade of the Day?: ${entry.easyTrade?.replace(/<[^>]*>/g, '') ?? 'N/A'}
+        List of actions to improve forward.: ${entry.actionsToImproveForward?.replace(/<[^>]*>/g, '') ?? 'N/A'}
+        Top 3 mistakes of today: ${entry.top3MistakesToday?.replace(/<[^>]*>/g, '') ?? 'N/A'}
+        Top 3 things done well today: ${entry.top3ThingsDoneWell?.replace(/<[^>]*>/g, '') ?? 'N/A'}
+        If i had to teach one takeaway from todays trades to a junior trader what would it be?: ${entry.oneTakeawayTeaching?.replace(/<[^>]*>/g, '') ?? 'N/A'}
+        What was the best and worst trade today?: ${entry.bestAndWorstTrades?.replace(/<[^>]*>/g, '') ?? 'N/A'}
+        What recurring mistake am i still making, and what's the real root cause?: ${entry.recurringMistake?.replace(/<[^>]*>/g, '') ?? 'N/A'}
+        If today repeated 10 more times, what would i change to maximize edge?, change for edge: ${entry.todaysRepetition?.replace(/<[^>]*>/g, '') ?? 'N/A'}
         P&L Summary: ${entry.pnlOfTheDay?.replace(/<[^>]*>/g, '') ?? 'N/A'}
     `;
 
@@ -388,7 +388,7 @@ export async function triggerAIAnalysis(entryId: number) {
         1.  **Key Strengths:** What did the trader do well based on their plan, execution, and review?
         2.  **Critical Weaknesses:** Identify the most significant areas needing improvement (e.g., rule-breaking, emotional control, flawed analysis, poor execution/management). Prioritize the biggest issues.
         3.  **Actionable Suggestions:** Offer specific, concrete steps the trader can take *tomorrow* and *long-term* to address the weaknesses and reinforce strengths. Link suggestions directly to observations.
-        4.  **Potential Emotional/Psychological Patterns:** Based on the entry (emotions, hesitation, rule-breaking, recurring mistakes), are there any underlying patterns? (e.g., fear of missing out, impatience, overconfidence after wins, revenge trading after losses). Be objective.
+        4.  **Potential Emotional/Psychological Patterns:** Based on the entry (emotions, hesitation, rule-breaking, What recurring mistake am i still making, and what's the real root cause?s), are there any underlying patterns? (e.g., fear of missing out, impatience, overconfidence after wins, revenge trading after losses). Be objective.
         5.  **Overall Summary:** A brief concluding thought on the day's performance and focus areas.
 
         Keep the tone constructive and supportive, like a coach aiming for improvement. Format the output using markdown with clear headings for each section.

@@ -114,7 +114,7 @@ export default async function JournalEntryPage({ params }: { params: { date: str
                     <TabsTrigger value="summary">Summary</TabsTrigger>
                     <TabsTrigger value="premarket">Pre-Market</TabsTrigger>
                     <TabsTrigger value="during">During Market</TabsTrigger>
-                    <TabsTrigger value="postmarket">Post-Market</TabsTrigger>
+                    <TabsTrigger value="postmarket">Post-Market Review</TabsTrigger>
                     <TabsTrigger value="strategic">Strategic</TabsTrigger>
                 </TabsList>
 
@@ -226,7 +226,7 @@ export default async function JournalEntryPage({ params }: { params: { date: str
                         </Card>
                     )}
 
-                    {/* Key Learnings */}
+                    {/* What did i learn/improve today(market+self) */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <Card>
                             <CardHeader>
@@ -280,7 +280,7 @@ export default async function JournalEntryPage({ params }: { params: { date: str
                                 {renderHtmlContent(entry.trcPlan || 'No plan provided')}
                             </div>
                             <div>
-                                <p className="text-muted-foreground mb-2">Reminders / aphorisms to self:</p>
+                                <p className="text-muted-foreground mb-2">Reminders / Aphorisms:</p>
                                 <div className="whitespace-pre-line">
                                     {entry.aphorisms || 'None recorded'}
                                 </div>
@@ -395,7 +395,7 @@ export default async function JournalEntryPage({ params }: { params: { date: str
                     </div>
                 </TabsContent>
 
-                {/* Post-Market Tab */}
+                {/* Post-Market Review Tab */}
                 <TabsContent value="postmarket" className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <Card>
@@ -475,35 +475,35 @@ export default async function JournalEntryPage({ params }: { params: { date: str
 
                             {entry.eliminationPlan && (
                                 <div>
-                                    <p className="text-muted-foreground mb-1">What to Eliminate:</p>
+                                    <p className="text-muted-foreground mb-1">What will i eliminate starting now?:</p>
                                     {renderHtmlContent(entry.eliminationPlan)}
                                 </div>
                             )}
 
                             {entry.changePlan && (
                                 <div>
-                                    <p className="text-muted-foreground mb-1">Changes to Achieve Goal:</p>
+                                    <p className="text-muted-foreground mb-1">What changes can be made in order to achieve my goal?:</p>
                                     {renderHtmlContent(entry.changePlan)}
                                 </div>
                             )}
 
                             {entry.solutionBrainstorm && (
                                 <div>
-                                    <p className="text-muted-foreground mb-1">Solution Brainstorm:</p>
+                                    <p className="text-muted-foreground mb-1">For the changes i need to make starting today, what are the solutions i can find?:</p>
                                     {renderHtmlContent(entry.solutionBrainstorm)}
                                 </div>
                             )}
 
                             {entry.adjustmentForTomorrow && (
                                 <div>
-                                    <p className="text-muted-foreground mb-1">Adjustments for Tomorrow:</p>
+                                    <p className="text-muted-foreground mb-1">What adjustments will i make for tomorrow?:</p>
                                     {renderHtmlContent(entry.adjustmentForTomorrow)}
                                 </div>
                             )}
 
                             {entry.easyTrade && (
                                 <div>
-                                    <p className="text-muted-foreground mb-1">Easy Trade of the Day:</p>
+                                    <p className="text-muted-foreground mb-1">What was the Easy Trade of the Day?:</p>
                                     {renderHtmlContent(entry.easyTrade)}
                                 </div>
                             )}
@@ -533,21 +533,21 @@ export default async function JournalEntryPage({ params }: { params: { date: str
                             <CardContent className="space-y-6">
                                 {entry.top3ThingsDoneWell && (
                                     <div>
-                                        <p className="text-muted-foreground mb-1">Top 3 Things Done Well:</p>
+                                        <p className="text-muted-foreground mb-1">Top 3 things done well today:</p>
                                         {renderHtmlContent(entry.top3ThingsDoneWell)}
                                     </div>
                                 )}
 
                                 {entry.top3MistakesToday && (
                                     <div>
-                                        <p className="text-muted-foreground mb-1">Top 3 Mistakes Today:</p>
+                                        <p className="text-muted-foreground mb-1">Top 3 mistakes of today:</p>
                                         {renderHtmlContent(entry.top3MistakesToday)}
                                     </div>
                                 )}
 
                                 {entry.bestAndWorstTrades && (
                                     <div>
-                                        <p className="text-muted-foreground mb-1">Best and Worst Trades:</p>
+                                        <p className="text-muted-foreground mb-1">What was the best and worst trade today?:</p>
                                         {renderHtmlContent(entry.bestAndWorstTrades)}
                                     </div>
                                 )}
@@ -561,21 +561,21 @@ export default async function JournalEntryPage({ params }: { params: { date: str
                             <CardContent className="space-y-6">
                                 {entry.recurringMistake && (
                                     <div>
-                                        <p className="text-muted-foreground mb-1">Recurring Mistake:</p>
+                                        <p className="text-muted-foreground mb-1">What recurring mistake am i still making, and what's the real root cause?:</p>
                                         {renderHtmlContent(entry.recurringMistake)}
                                     </div>
                                 )}
 
                                 {entry.oneTakeawayTeaching && (
                                     <div>
-                                        <p className="text-muted-foreground mb-1">One Takeaway to Teach:</p>
+                                        <p className="text-muted-foreground mb-1">If i had to teach one takeaway from todays trades to a junior trader what would it be?:</p>
                                         {renderHtmlContent(entry.oneTakeawayTeaching)}
                                     </div>
                                 )}
 
                                 {entry.todaysRepetition && (
                                     <div>
-                                        <p className="text-muted-foreground mb-1">If Today Repeated 10x:</p>
+                                        <p className="text-muted-foreground mb-1">If today repeated 10 more times, what would i change to maximize edge?:</p>
                                         {renderHtmlContent(entry.todaysRepetition)}
                                     </div>
                                 )}
@@ -590,7 +590,7 @@ export default async function JournalEntryPage({ params }: { params: { date: str
                         <CardContent>
                             {entry.actionsToImproveForward && (
                                 <div>
-                                    <p className="text-muted-foreground mb-1">Actions to Improve Forward:</p>
+                                    <p className="text-muted-foreground mb-1">List of actions to improve forward.:</p>
                                     {renderHtmlContent(entry.actionsToImproveForward)}
                                 </div>
                             )}
