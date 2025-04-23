@@ -60,7 +60,7 @@ const formConfig = [
             },
             {
                 id: "aphorisms",
-                label: "Reminders / Aphorisms",
+                label: "Reminders / aphorisms to self",
                 type: "input",
                 placeholder: "e.g., Stick to the plan, don't chase",
                 colSpan: 2,
@@ -74,7 +74,7 @@ const formConfig = [
             },
             {
                 id: "tradePlan",
-                label: "Trading plan for the day",
+                label: "Trading plan for the day (Setup, Triggers, Invalidation,Size plan)",
                 type: "wysiwyg",
                 placeholder: "Setup, Triggers, Invalidation, Size plan...",
                 colSpan: 2,
@@ -115,7 +115,7 @@ const formConfig = [
             },
             {
                 id: "managementReason",
-                label: "Management Details",
+                label: "Reasons for bad management",
                 type: "wysiwyg",
                 placeholder: "Details about trade management",
             },
@@ -126,12 +126,12 @@ const formConfig = [
             },
             {
                 id: "sizingOk",
-                label: "Sizing OK?",
+                label: "Sized Properly?",
                 type: "checkbox",
             },
             {
                 id: "convictionTrade",
-                label: "Conviction Trade?",
+                label: "Was it a conviction trade?",
                 type: "checkbox",
             },
             {

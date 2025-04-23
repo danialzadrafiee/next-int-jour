@@ -280,7 +280,7 @@ export default async function JournalEntryPage({ params }: { params: { date: str
                                 {renderHtmlContent(entry.trcPlan || 'No plan provided')}
                             </div>
                             <div>
-                                <p className="text-muted-foreground mb-2">Reminders / Aphorisms:</p>
+                                <p className="text-muted-foreground mb-2">Reminders / aphorisms to self:</p>
                                 <div className="whitespace-pre-line">
                                     {entry.aphorisms || 'None recorded'}
                                 </div>
