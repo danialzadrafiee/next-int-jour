@@ -30,11 +30,14 @@ function sanitizeImageContent(data: any): any {
 // Analyze entries with OpenRouter API (using Google's Gemini model)
 async function analyzeEntriesWithAI(entries: any[], prompt: string) {
     try {
-        const entriesText = entries.map(entry => {
-            return `Date 2: ${new Date(entry.date).toLocaleDateString()}\nContent: ${entry.content}`;
-        }).join('\n\n');
+
+        const entriesText = entries.map(entry =>
+            JSON.stringify(entry, null, 2)
+        ).join('\n\n');
 
         const fullPrompt = `${prompt}\n\nJournal entries to analyze:\n${entriesText}`;
+
+
 
         const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
             method: 'POST',
@@ -67,7 +70,7 @@ export async function GET(request: NextRequest) {
     try {
         const { searchParams } = new URL(request.url);
         const fetchSaved = searchParams.get('fetchSaved');
-        
+
         if (fetchSaved === 'true') {
             try {
                 const savedAnalyses = await prisma.aIAnalysis.findMany({
@@ -75,18 +78,18 @@ export async function GET(request: NextRequest) {
                         createdAt: 'desc'
                     }
                 });
-                
+
                 return NextResponse.json({ analyses: savedAnalyses });
             } catch (error) {
                 console.error('Error fetching saved analyses:', error);
                 return NextResponse.json({ error: 'Failed to fetch saved analyses' }, { status: 500 });
             }
         }
-        
+
         const from = searchParams.get('from');
         const to = searchParams.get('to');
         let whereClause: any = {};
-        
+
         // If both dates are provided, filter by date range
         if (from && to) {
             const fromDate = new Date(from);
@@ -128,7 +131,7 @@ export async function GET(request: NextRequest) {
                 }
             };
         }
-        
+
         const entries = await prisma.journalEntry.findMany({
             where: whereClause,
             include: {
@@ -138,10 +141,10 @@ export async function GET(request: NextRequest) {
                 date: 'asc',
             },
         });
-        
+
         // Sanitize the entries to remove base64 image data
         const sanitizedEntries = sanitizeImageContent(entries);
-        
+
         return NextResponse.json({ entries: sanitizedEntries });
     } catch (error) {
         console.error('Error fetching journal entries:', error);
@@ -155,46 +158,45 @@ export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
         const { prompt, dateRange } = body;
-        
+
         if (!prompt) {
             return NextResponse.json({ error: 'Prompt is required' }, { status: 400 });
         }
-        
+
         // Fix for TypeScript error - properly type the whereClause
         let whereClause: any = {};
-        
+
         // Handle date filtering if provided
         if (dateRange?.from || dateRange?.to) {
             whereClause.date = {};
-            
+
             if (dateRange.from) {
                 whereClause.date.gte = new Date(dateRange.from);
             }
-            
+
             if (dateRange.to) {
                 whereClause.date.lte = new Date(dateRange.to);
             }
         }
-        
+
         const entries = await prisma.journalEntry.findMany({
             where: whereClause,
             orderBy: {
                 date: 'asc',
             },
         });
-        
+
         if (entries.length === 0) {
-            return NextResponse.json({ 
+            return NextResponse.json({
                 analysis: "No journal entries found for the specified period."
             });
         }
-        
+
         // Sanitize the entries to remove base64 image data
         const sanitizedEntries = sanitizeImageContent(entries);
-        
         // Get AI analysis
         const analysis = await analyzeEntriesWithAI(sanitizedEntries, prompt);
-        
+
         return NextResponse.json({ analysis });
     } catch (error) {
         console.error('Error analyzing journal entries:', error);
@@ -208,11 +210,11 @@ export async function PUT(request: NextRequest) {
     try {
         const body = await request.json();
         const { title, prompt, result, dateRange } = body;
-        
+
         if (!title || !prompt || !result) {
             return NextResponse.json({ error: 'Title, prompt, and result are required' }, { status: 400 });
         }
-        
+
         const savedAnalysis = await prisma.aIAnalysis.create({
             data: {
                 title,
@@ -222,7 +224,7 @@ export async function PUT(request: NextRequest) {
                 dateRangeTo: dateRange?.to ? new Date(dateRange.to) : null,
             }
         });
-        
+
         return NextResponse.json({ success: true, analysisId: savedAnalysis.id });
     } catch (error) {
         console.error('Error saving analysis:', error);
