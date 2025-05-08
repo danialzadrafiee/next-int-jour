@@ -31,7 +31,7 @@ function sanitizeImageContent(data: any): any {
 async function analyzeEntriesWithAI(entries: any[], prompt: string) {
     try {
         const entriesText = entries.map(entry => {
-            return `Date: ${new Date(entry.date).toLocaleDateString()}\nContent: ${entry.content}`;
+            return `Date 2: ${new Date(entry.date).toLocaleDateString()}\nContent: ${entry.content}`;
         }).join('\n\n');
 
         const fullPrompt = `${prompt}\n\nJournal entries to analyze:\n${entriesText}`;
