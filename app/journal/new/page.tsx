@@ -15,6 +15,43 @@ import { DatePicker } from "@/components/ui/date-picker";
 import { toast } from "sonner";
 import Link from "next/link";
 import React from "react";
+// Add these interfaces at the top of your file
+
+interface BaseFieldConfig {
+    id: string;
+    label: string;
+    type: string;
+    placeholder?: string;
+    colSpan?: number;
+}
+
+interface InputFieldConfig extends BaseFieldConfig {
+    type: 'input';
+}
+
+interface WysiwygFieldConfig extends BaseFieldConfig {
+    type: 'wysiwyg';
+}
+
+interface CheckboxFieldConfig extends BaseFieldConfig {
+    type: 'checkbox';
+}
+
+interface SliderFieldConfig extends BaseFieldConfig {
+    type: 'slider';
+    min: number;
+    max: number;
+    step: number;
+    initialValue: number;
+    suffix: string;
+}
+
+type FieldConfig = InputFieldConfig | WysiwygFieldConfig | CheckboxFieldConfig | SliderFieldConfig;
+interface SectionConfig {
+    section: string;
+    icon: string;
+    fields: FieldConfig[];
+}
 
 type FormState = {
     message: string | null;
@@ -23,7 +60,7 @@ type FormState = {
 };
 
 // Define the configuration for each form field
-const formConfig = [
+const formConfig: SectionConfig[] = [
     {
         section: "Pre-Market Prep",
         icon: "🧠",
@@ -81,72 +118,7 @@ const formConfig = [
             },
         ],
     },
-    {
-        section: "During Market",
-        icon: "⚔",
-        fields: [
-            {
-                id: "executionNotes",
-                label: "Execution Notes",
-                type: "wysiwyg",
-                placeholder: "Detailed notes on trades taken. You can paste images directly here.",
-                colSpan: 2,
-            },
-            {
-                id: "hesitation",
-                label: "Did You Hesitate?",
-                type: "checkbox",
-            },
-            {
-                id: "hesitationReason",
-                label: "Where and why?",
-                type: "wysiwyg",
-                placeholder: "Reason for hesitation (if applicable)",
-            },
-            {
-                id: "managementRating",
-                label: "Trade Management Rating",
-                type: "slider",
-                min: 1,
-                max: 5,
-                step: 1,
-                initialValue: 3,
-                suffix: "/5",
-            },
-            {
-                id: "managementReason",
-                label: "Reasons for bad management",
-                type: "wysiwyg",
-                placeholder: "Details about trade management",
-            },
-            {
-                id: "stayedWithWinner",
-                label: "Stayed with Winners?",
-                type: "checkbox",
-            },
-            {
-                id: "sizingOk",
-                label: "Sized Properly?",
-                type: "checkbox",
-            },
-            {
-                id: "convictionTrade",
-                label: "Was it a conviction trade?",
-                type: "checkbox",
-            },
-            {
-                id: "convictionTradeReason",
-                label: "What was the conviction and if not a conviction one why did you trade it?",
-                type: "wysiwyg",
-                placeholder: "Details about conviction trade (if applicable)",
-            },
-            {
-                id: "convictionSized",
-                label: "Was sizing matched to conviction?",
-                type: "checkbox",
-            },
-        ],
-    },
+
     {
         section: "Post-Market Review",
         icon: "📊",
@@ -314,7 +286,7 @@ export default function NewJournalEntryPage() {
     const initialSliderStates = formConfig.reduce((acc, section) => {
         section.fields.forEach(field => {
             if (field.type === 'slider') {
-                acc[field.id] = field.initialValue as number;
+                acc[field.id] = (field as SliderFieldConfig).initialValue;
             }
         });
         return acc;
@@ -448,20 +420,19 @@ export default function NewJournalEntryPage() {
                                     {field.type === 'slider' && (
                                         <>
                                             <Label htmlFor={field.id}>
-                                                {field.label} ({sliderStates[field.id]}{field.suffix})
+                                                {field.label} ({sliderStates[field.id]}{(field as SliderFieldConfig).suffix})
                                             </Label>
                                             <Slider
                                                 id={field.id}
                                                 name={field.id}
-                                                defaultValue={[field.initialValue as number]}
-                                                min={field.min}
-                                                max={field.max}
-                                                step={field.step}
+                                                defaultValue={[(field as SliderFieldConfig).initialValue]}
+                                                min={(field as SliderFieldConfig).min}
+                                                max={(field as SliderFieldConfig).max}
+                                                step={(field as SliderFieldConfig).step}
                                                 onValueChange={(value) => setSliderStates({ ...sliderStates, [field.id]: value[0] })}
                                             />
                                         </>
                                     )}
-
                                     {/* Display validation errors */}
                                     {formState?.errors?.[field.id] && <p className="text-sm text-red-500">{formState.errors[field.id][0]}</p>}
                                 </div>

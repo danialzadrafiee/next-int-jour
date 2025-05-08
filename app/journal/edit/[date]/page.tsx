@@ -126,72 +126,7 @@ const formConfig = [
             },
         ],
     },
-    {
-        section: "During Market",
-        icon: "⚔",
-        fields: [
-            {
-                id: "executionNotes",
-                label: "Execution Notes",
-                type: "wysiwyg",
-                placeholder: "Detailed notes on trades taken. You can paste images directly here.",
-                colSpan: 2,
-            },
-            {
-                id: "hesitation",
-                label: "Did You Hesitate?",
-                type: "checkbox",
-            },
-            {
-                id: "hesitationReason",
-                label: "Where and why?",
-                type: "wysiwyg",
-                placeholder: "Reason for hesitation (if applicable)",
-            },
-            {
-                id: "managementRating",
-                label: "Trade Management Rating",
-                type: "slider",
-                min: 1,
-                max: 5,
-                step: 1,
-                initialValue: 3, // Default value if no data
-                suffix: "/5",
-            },
-            {
-                id: "managementReason",
-                label: "Reasons for bad management",
-                type: "wysiwyg",
-                placeholder: "Details about trade management",
-            },
-            {
-                id: "stayedWithWinner",
-                label: "Stayed with Winners?",
-                type: "checkbox",
-            },
-            {
-                id: "sizingOk",
-                label: "Sized Properly?",
-                type: "checkbox",
-            },
-            {
-                id: "convictionTrade",
-                label: "Was it a conviction trade?",
-                type: "checkbox",
-            },
-            {
-                id: "convictionTradeReason",
-                label: "What was the conviction and if not a conviction one why did you trade it?",
-                type: "wysiwyg",
-                placeholder: "Details about conviction trade (if applicable)",
-            },
-            {
-                id: "convictionSized",
-                label: "Was sizing matched to conviction?",
-                type: "checkbox",
-            },
-        ],
-    },
+
     {
         section: "Post-Market Review",
         icon: "📊",
@@ -352,18 +287,19 @@ const getInitialSliderStates = (data: JournalEntryData | null) => {
     formConfig.forEach(section => {
         section.fields.forEach(field => {
             if (field.type === 'slider') {
-                // Use fetched data if available, otherwise the default initialValue from config
-                initialStates[field.id] = data?.[field.id as keyof JournalEntryData] as number | undefined || field.initialValue;
+                const defaultValue = 'initialValue' in field ? field.initialValue : 5;
+                initialStates[field.id] = (data?.[field.id as keyof JournalEntryData] as number) ?? defaultValue;
             }
         });
     });
     return initialStates;
 };
 
-
-export default function EditJournalEntryPage({ params }: { params: { date: string } }) {
-    const dateParam = use(params).date; // More concise unwrapping
-
+export default function EditJournalEntryPage({ params }: { params: any }) {
+    // Use React.use() to unwrap the params promise
+    const unwrappedParams = React.use(params) as { date: string };
+    const dateParam = unwrappedParams.date;
+    
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -425,9 +361,9 @@ export default function EditJournalEntryPage({ params }: { params: { date: strin
             const formData = new FormData(e.currentTarget);
 
             // Add the entry ID to the form data for updates
-             if (entryData?.id) {
-                 formData.set('id', entryData.id.toString());
-             }
+            if (entryData?.id) {
+                formData.set('id', entryData.id.toString());
+            }
 
             // Handle date field
             if (date) {
@@ -439,22 +375,22 @@ export default function EditJournalEntryPage({ params }: { params: { date: strin
                 formData.set(key, value);
             });
 
-             // Add slider values to FormData
-             Object.entries(sliderStates).forEach(([key, value]) => {
-                 formData.set(key, value.toString());
-             });
+            // Add slider values to FormData
+            Object.entries(sliderStates).forEach(([key, value]) => {
+                formData.set(key, value.toString());
+            });
 
-             // Handle checkbox values (server action expects 'on' or null)
-             formConfig.forEach(section => {
-                 section.fields.forEach(field => {
-                     if (field.type === 'checkbox') {
-                          const checkbox = e.currentTarget.elements.namedItem(field.id) as HTMLInputElement;
-                          if (checkbox && !checkbox.checked) {
-                              formData.set(field.id, ''); // Set to empty string if not checked
-                          }
-                     }
-                 });
-             });
+            // Handle checkbox values (server action expects 'on' or null)
+            formConfig.forEach(section => {
+                section.fields.forEach(field => {
+                    if (field.type === 'checkbox') {
+                        const checkbox = e.currentTarget.elements.namedItem(field.id) as HTMLInputElement;
+                        if (checkbox && !checkbox.checked) {
+                            formData.set(field.id, ''); // Set to empty string if not checked
+                        }
+                    }
+                });
+            });
 
 
             // Call the server action with the current formState
@@ -477,8 +413,8 @@ export default function EditJournalEntryPage({ params }: { params: { date: strin
         }
     };
 
-     // Effect to log validation errors to console for debugging
-     useEffect(() => {
+    // Effect to log validation errors to console for debugging
+    useEffect(() => {
         if (formState?.errors) {
             console.error("Server-side validation errors:", formState.errors);
         }
@@ -516,7 +452,7 @@ export default function EditJournalEntryPage({ params }: { params: { date: strin
             </div>
             <form onSubmit={handleSubmit} className="space-y-8">
                 {/* Hidden input for entry ID */}
-                 {entryData?.id && <input type="hidden" name="id" value={entryData.id} />}
+                {entryData?.id && <input type="hidden" name="id" value={entryData.id} />}
 
                 {/* Date Selection */}
                 <div className="space-y-2">
@@ -577,16 +513,15 @@ export default function EditJournalEntryPage({ params }: { params: { date: strin
                                     {field.type === 'slider' && (
                                         <>
                                             <Label htmlFor={field.id}>
-                                                {field.label} ({sliderStates[field.id]}{field.suffix})
+                                                {field.label} ({sliderStates[field.id]}{('suffix' in field) ? field.suffix : ''})
                                             </Label>
                                             <Slider
                                                 id={field.id}
                                                 name={field.id}
-                                                // Use state value for controlled component
                                                 value={[sliderStates[field.id]]}
-                                                min={field.min}
-                                                max={field.max}
-                                                step={field.step}
+                                                min={('min' in field) ? field.min : 1}
+                                                max={('max' in field) ? field.max : 10}
+                                                step={('step' in field) ? field.step : 1}
                                                 onValueChange={(value) => setSliderStates({ ...sliderStates, [field.id]: value[0] })}
                                             />
                                         </>

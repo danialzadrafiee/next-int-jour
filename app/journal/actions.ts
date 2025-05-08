@@ -90,17 +90,6 @@ const JournalEntrySchema = z.object({
     macroContext: z.string().optional().nullable(),
     tradePlan: z.string().optional().nullable(),
 
-    // During Market
-    executionNotes: z.string().optional().nullable(),
-    hesitation: z.preprocess((val) => val === 'on' || val === true, z.boolean().optional().default(false)),
-    hesitationReason: z.string().optional().nullable(),
-    managementRating: z.coerce.number().min(1).max(5).optional().nullable(),
-    managementReason: z.string().optional().nullable(),
-    stayedWithWinner: z.preprocess((val) => val === 'on' || val === true, z.boolean().optional().default(false)),
-    sizingOk: z.preprocess((val) => val === 'on' || val === true, z.boolean().optional().default(false)),
-    convictionTrade: z.preprocess((val) => val === 'on' || val === true, z.boolean().optional().default(false)),
-    convictionTradeReason: z.string().optional().nullable(),
-    convictionSized: z.preprocess((val) => val === 'on' || val === true, z.boolean().optional().default(false)),
 
     // Post-Market Review
     loggedInStats: z.preprocess((val) => val === 'on' || val === true, z.boolean().optional().default(false)),

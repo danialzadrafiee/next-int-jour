@@ -113,7 +113,6 @@ export default async function JournalEntryPage({ params }: { params: { date: str
                 <TabsList className="mb-6">
                     <TabsTrigger value="summary">Summary</TabsTrigger>
                     <TabsTrigger value="premarket">Pre-Market</TabsTrigger>
-                    <TabsTrigger value="during">During Market</TabsTrigger>
                     <TabsTrigger value="postmarket">Post-Market Review</TabsTrigger>
                     <TabsTrigger value="strategic">Strategic</TabsTrigger>
                 </TabsList>
@@ -305,95 +304,6 @@ export default async function JournalEntryPage({ params }: { params: { date: str
                     </Card>
                 </TabsContent>
 
-                {/* During Market Tab */}
-                <TabsContent value="during" className="space-y-6">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Execution Notes</CardTitle>
-                            <CardDescription>Detailed notes on trades taken</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="prose max-w-none dark:prose-invert"
-                                dangerouslySetInnerHTML={{ __html: processedNotes }} />
-                        </CardContent>
-                    </Card>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Trade Management</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="space-y-4">
-                                    <div>
-                                        <p className="text-muted-foreground mb-1">Management Rating:</p>
-                                        <p className="text-xl font-medium">{entry.managementRating || 'N/A'}/5</p>
-                                        {entry.managementReason && (
-                                            <div className="mt-2">
-                                                <p className="text-muted-foreground mb-1">Reason:</p>
-                                                {renderHtmlContent(entry.managementReason)}
-                                            </div>
-                                        )}
-                                    </div>
-
-                                    <div className="grid grid-cols-2 gap-4 pt-2">
-                                        <div className="flex flex-col items-start">
-                                            <Badge className="mb-1">
-                                                {entry.hesitation ? "Hesitated" : "No Hesitation"}
-                                            </Badge>
-                                            {entry.hesitation && entry.hesitationReason && (
-                                                <div className="text-sm mt-1">
-                                                    {renderHtmlContent(entry.hesitationReason)}
-                                                </div>
-                                            )}
-                                        </div>
-
-                                        <div className="flex flex-col items-start">
-                                            <Badge className="mb-1">
-                                                {entry.stayedWithWinner ? "Stayed with Winners" : "Left Winners"}
-                                            </Badge>
-                                        </div>
-
-                                        <div className="flex flex-col items-start">
-                                            <Badge className="mb-1">
-                                                {entry.sizingOk ? "Sized Properly" : "Sizing Issues"}
-                                            </Badge>
-                                        </div>
-
-                                        <div className="flex flex-col items-start">
-                                            <Badge className="mb-1">
-                                                {entry.convictionSized ? "Conviction Matched Size" : "Size/Conviction Mismatch"}
-                                            </Badge>
-                                        </div>
-                                    </div>
-                                </div>
-                            </CardContent>
-                        </Card>
-
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Conviction</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="space-y-4">
-                                    <div>
-                                        <p className="text-muted-foreground mb-1">Conviction Trade:</p>
-                                        <Badge className="mb-1">
-                                            {entry.convictionTrade ? "Yes" : "No"}
-                                        </Badge>
-                                    </div>
-
-                                    {entry.convictionTradeReason && (
-                                        <div>
-                                            <p className="text-muted-foreground mb-1">Reason:</p>
-                                            {renderHtmlContent(entry.convictionTradeReason)}
-                                        </div>
-                                    )}
-                                </div>
-                            </CardContent>
-                        </Card>
-                    </div>
-                </TabsContent>
 
                 {/* Post-Market Review Tab */}
                 <TabsContent value="postmarket" className="space-y-6">
