@@ -103,7 +103,6 @@ const JournalEntrySchema = z.object({
     changePlan: z.string().optional().nullable(),
     solutionBrainstorm: z.string().optional().nullable(),
     adjustmentForTomorrow: z.string().optional().nullable(),
-    easyTrade: z.string().optional().nullable(),
 
     // Strategic
     actionsToImproveForward: z.string().optional().nullable(),
@@ -163,7 +162,6 @@ export async function saveJournalEntry(prevState: any, formData: FormData) {
         'executionNotes', 'hesitationReason', 'managementReason', 
         'convictionTradeReason', 'rulesExplanation', 'whyTrcProgress',
         'learnings', 'whatIsntWorking', 'eliminationPlan', 'changePlan',
-        'solutionBrainstorm', 'adjustmentForTomorrow', 'easyTrade',
         'actionsToImproveForward', 'top3MistakesToday', 'top3ThingsDoneWell',
         'oneTakeawayTeaching', 'bestAndWorstTrades', 'recurringMistake',
         'todaysRepetition', 'pnlOfTheDay'
@@ -337,7 +335,6 @@ export async function triggerAIAnalysis(entryId: number) {
         TRC Goal: ${entry.trcGoal ?? 'N/A'}
         Plan to achieve TRC Goal: ${entry.trcPlan ?? 'N/A'}
         Aphorisms/Reminders: ${entry.aphorisms ?? 'N/A'}
-        Macro Context: ${entry.macroContext ?? 'N/A'}
         Trade Plan: ${entry.tradePlan ?? 'N/A'}
         Execution Notes: ${entry.executionNotes?.replace(/<[^>]*>|!\[\[.*?\]\]/g, '') ?? 'N/A'}
         Hesitated: ${entry.hesitation ? 'Yes' : 'No'}
@@ -360,7 +357,6 @@ export async function triggerAIAnalysis(entryId: number) {
         Change Plan: ${entry.changePlan?.replace(/<[^>]*>/g, '') ?? 'N/A'}
         For the changes i need to make starting today, what are the solutions i can find?: ${entry.solutionBrainstorm?.replace(/<[^>]*>/g, '') ?? 'N/A'}
         Adjustment for Tomorrow: ${entry.adjustmentForTomorrow?.replace(/<[^>]*>/g, '') ?? 'N/A'}
-        What was the Easy Trade of the Day?: ${entry.easyTrade?.replace(/<[^>]*>/g, '') ?? 'N/A'}
         List of actions to improve forward.: ${entry.actionsToImproveForward?.replace(/<[^>]*>/g, '') ?? 'N/A'}
         Top 3 mistakes of today: ${entry.top3MistakesToday?.replace(/<[^>]*>/g, '') ?? 'N/A'}
         Top 3 things done well today: ${entry.top3ThingsDoneWell?.replace(/<[^>]*>/g, '') ?? 'N/A'}

@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = env("DATABASE_URL")
+  url      = "file:./dev.db"
 }
 
 model JournalEntry {
@@ -47,7 +47,6 @@ model JournalEntry {
   changePlan       String?
   solutionBrainstorm String?
   adjustmentForTomorrow String?
-  easyTrade        String?
 
   // Strategic Adjustments
   actionsToImproveForward String?
@@ -77,9 +76,20 @@ model JournalImage {
   imagePath      String // Store path relative to public dir or cloud URL
   filename       String // Store the original filename or the generated one
   caption        String?
-  section        String?  // e.g., 'execution_notes', 'chart_upload'
+  section        String? 
   position       Int?
 
   // Relation to Entry
   entry JournalEntry @relation(fields: [journalEntryId], references: [id], onDelete: Cascade) // Cascade delete images if entry is deleted
+}
+
+
+model AIAnalysis {
+  id          Int      @id @default(autoincrement())
+  title       String
+  prompt      String
+  result      String
+  dateRangeFrom DateTime?
+  dateRangeTo   DateTime?
+  createdAt   DateTime @default(now())
 }

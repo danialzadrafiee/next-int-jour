@@ -287,21 +287,7 @@ export default async function JournalEntryPage({ params }: { params: { date: str
                         </CardContent>
                     </Card>
 
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Market Context & Trading Plan</CardTitle>
-                        </CardHeader>
-                        <CardContent className="grid grid-cols-1 gap-6">
-                            <div>
-                                <p className="text-muted-foreground mb-2">Macro Context:</p>
-                                {renderHtmlContent(entry.macroContext || 'No context provided')}
-                            </div>
-                            <div>
-                                <p className="text-muted-foreground mb-2">Trading Plan:</p>
-                                {renderHtmlContent(entry.tradePlan || 'No plan provided')}
-                            </div>
-                        </CardContent>
-                    </Card>
+               
                 </TabsContent>
 
 
@@ -411,12 +397,7 @@ export default async function JournalEntryPage({ params }: { params: { date: str
                                 </div>
                             )}
 
-                            {entry.easyTrade && (
-                                <div>
-                                    <p className="text-muted-foreground mb-1">What was the Easy Trade of the Day?:</p>
-                                    {renderHtmlContent(entry.easyTrade)}
-                                </div>
-                            )}
+                   
                         </CardContent>
                     </Card>
 

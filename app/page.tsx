@@ -33,9 +33,14 @@ export default async function JournalPage() {
     <main className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">📖 My Trading Journal</h1>
-        <Button asChild>
-          <Link href="/journal/new">➕ Add New Entry</Link>
-        </Button>
+        <div className="flex gap-2">
+          <Button asChild>
+            <Link href="/journal/new">➕ Add New Entry</Link>
+          </Button>
+          <Button asChild>
+            <Link href="/ai">🤖 AI</Link>
+          </Button>
+        </div>
       </div>
 
       {entries.length === 0 ? (
@@ -47,7 +52,7 @@ export default async function JournalPage() {
               <AccordionTrigger className="px-4 py-3 bg-muted hover:bg-accent transition-colors">
                 <div className="flex justify-between items-center w-full pr-4">
                   <span className="font-medium flex items-center">
-                    📅 {format(new Date(entry.date), 'MMM dd, yyyy')} 
+                    📅 {format(new Date(entry.date), 'MMM dd, yyyy')}
                     {entry.aiInsight && <Badge variant="outline" className="ml-2 bg-blue-50">AI Analyzed</Badge>}
                   </span>
                   <span className="text-muted-foreground text-sm truncate max-w-md text-right">
@@ -65,21 +70,21 @@ export default async function JournalPage() {
                         {entry.emotionalTemp || 'N/A'}/10
                       </Badge>
                     </div>
-                    
+
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-muted-foreground">Management:</span>
                       <Badge >
                         {entry.managementRating || 'N/A'}/5
                       </Badge>
                     </div>
-                    
+
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-muted-foreground">TRC Progress:</span>
                       <Badge >
                         {entry.trcProgress ? "Yes" : "No"}
                       </Badge>
                     </div>
-                    
+
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-muted-foreground">Rules Followed:</span>
                       <Badge>
@@ -87,7 +92,7 @@ export default async function JournalPage() {
                       </Badge>
                     </div>
                   </div>
-                  
+
                   {/* Middle Column - Key Takeaways */}
                   <div className="space-y-2">
                     <h3 className="text-sm font-medium text-muted-foreground">Key Trade Info</h3>
@@ -104,7 +109,7 @@ export default async function JournalPage() {
                       </p>
                     )}
                   </div>
-                  
+
                   {/* Right Column - Images & Actions */}
                   <div className="flex flex-col justify-between h-full">
                     <div>
@@ -113,7 +118,7 @@ export default async function JournalPage() {
                         {entry.learnings || entry.oneTakeawayTeaching || 'No learnings recorded'}
                       </p>
                     </div>
-                    
+
                     <div className="flex justify-end space-x-2 mt-4">
                       <Button variant="secondary" size="sm" asChild>
                         <Link href={`/journal/${format(new Date(entry.date), 'yyyy-MM-dd')}`}>
@@ -128,7 +133,7 @@ export default async function JournalPage() {
                     </div>
                   </div>
                 </div>
-                
+
                 {/* P&L Information - If Available */}
                 {entry.pnlOfTheDay && (
                   <Card className="mt-4">
@@ -145,7 +150,7 @@ export default async function JournalPage() {
           ))}
         </Accordion>
       )}
-      
+
       {/* Add a simple chart or stats at the bottom */}
       {entries.length > 0 && (
         <div className="mt-8 p-4 border rounded-lg">

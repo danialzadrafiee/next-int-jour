@@ -30,7 +30,6 @@ CREATE TABLE "JournalEntry" (
     "changePlan" TEXT,
     "solutionBrainstorm" TEXT,
     "adjustmentForTomorrow" TEXT,
-    "easyTrade" TEXT,
     "actionsToImproveForward" TEXT,
     "top3MistakesToday" TEXT,
     "top3ThingsDoneWell" TEXT,
@@ -54,6 +53,17 @@ CREATE TABLE "JournalImage" (
     "section" TEXT,
     "position" INTEGER,
     CONSTRAINT "JournalImage_journalEntryId_fkey" FOREIGN KEY ("journalEntryId") REFERENCES "JournalEntry" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "AIAnalysis" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "title" TEXT NOT NULL,
+    "prompt" TEXT NOT NULL,
+    "result" TEXT NOT NULL,
+    "dateRangeFrom" DATETIME,
+    "dateRangeTo" DATETIME,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- CreateIndex
